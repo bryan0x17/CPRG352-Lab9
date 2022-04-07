@@ -22,7 +22,17 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
+        String uuid = request.getParameter("uuid");
+        
+        // If the UUID exists, send the user to the change password page
+        if (uuid != null) {
+            request.setAttribute("uuid", uuid);
+            getServletContext().getRequestDispatcher("/WEB-INF/resetNewPassword.jsp").forward(request, response);
+        } else {
+            getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
+        }
+        
+        
     }
 
     /**
