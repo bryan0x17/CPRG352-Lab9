@@ -36,7 +36,7 @@ public class AccountService {
         return null;
     }
     
-    public void resetPassword(String email, String path, String url) {
+    public boolean resetPassword(String email, String path, String url) {
         String uuid = UUID.randomUUID().toString();
         UserDB userDB = new UserDB();
         String link = url + "?uuid=" + uuid;
@@ -61,16 +61,18 @@ public class AccountService {
                 //Add the uuid to the user database
                 user.setResetPasswordUuid(uuid);
                 userDB.update(user);
+                return true;
             }
             else {
                 throw new Exception("No such user");
             }
         } catch (Exception e) {
             Logger.getLogger(AccountService.class.getName()).log(Level.WARNING, "Unsuccesfull reset request by " + email, e);
+            return false;
         }
     }
     
-    public void changePassword(String email, String password, String uuid) {
+    public boolean changePassword(String email, String password, String uuid) {
         UserDB userDB = new UserDB();
         
         try {
@@ -80,11 +82,13 @@ public class AccountService {
                 user.setResetPasswordUuid(null);
                 userDB.update(user);
                 Logger.getLogger(AccountService.class.getName()).log(Level.INFO, "Password changed by {0}", email);
+                return true;
             } else {
                 throw new Exception("User does not exist or incorrect UUID");
             }
         } catch(Exception e) {
             Logger.getLogger(AccountService.class.getName()).log(Level.WARNING, "Unsuccesfull password change by " + email, e);
+            return false;
         }
     }
 }
