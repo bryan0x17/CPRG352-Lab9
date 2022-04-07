@@ -43,6 +43,7 @@ public class AccountService {
         try {
             User user = userDB.get(email);
             if (user != null) {
+                
                 Logger.getLogger(AccountService.class.getName()).log(Level.INFO, "Reset password by {0}", email);
                 
                 String to = user.getEmail();
@@ -57,6 +58,9 @@ public class AccountService {
                 
                 GmailService.sendMail(to, subject, template, tags);
                 
+                //Add the uuid to the user database
+                user.setResetPasswordUuid(uuid);
+                userDB.update(user);
             }
             else {
                 throw new Exception("No such user");
