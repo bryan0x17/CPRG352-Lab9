@@ -22,5 +22,7 @@
             <input type="password" name="password" id="password" required>
             <button type="submit">Change Password</button>
         </form>
+            <p>${message}</p>
+            <a href="login">Login</a>
     </body>
 </html>
