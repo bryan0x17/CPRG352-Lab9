@@ -19,5 +19,7 @@
             <input type="email" name="email" id="email" required>
             <button type="submit">Reset</button>
         </form>
+        <p>${message}</p>
+        <a href="login">Login</a>
     </body>
 </html>
