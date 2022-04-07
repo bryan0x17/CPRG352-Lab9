@@ -55,6 +55,9 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "password")
     private String password;
+    @Basic(optional = false)
+    @Column(name = "reset_password_UUID")
+    private String resetPasswordUuid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Note> noteList;
     @JoinColumn(name = "role", referencedColumnName = "role_id")
@@ -131,6 +134,14 @@ public class User implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+    
+    public String getResetPasswordUuid() {
+        return resetPasswordUuid;
+    }
+
+    public void setResetPasswordUuid(String resetPasswordUuid) {
+        this.resetPasswordUuid = resetPasswordUuid;
     }
 
     @Override
