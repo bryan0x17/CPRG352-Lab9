@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import services.AccountService;
 
 
 public class ResetPasswordServlet extends HttpServlet {
@@ -35,6 +36,15 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String email = request.getParameter("email");
+        String url = request.getRequestURL().toString();
+        
+        AccountService as = new AccountService();
+        String path = getServletContext().getRealPath("/WEB-INF");
+        as.resetPassword(email, path, url);
+        String message = "Your request has been processed. Please check your email for the next steps.";
+        request.setAttribute("message", message);
+        
         getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
     }
 }
