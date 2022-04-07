@@ -1,4 +1,3 @@
-
 package servlets;
 
 import java.io.IOException;
@@ -9,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import services.AccountService;
 
-
 public class ResetPasswordServlet extends HttpServlet {
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -23,7 +22,7 @@ public class ResetPasswordServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
-        
+
         // If the UUID exists, send the user to the change password page
         if (uuid != null) {
             request.setAttribute("uuid", uuid);
@@ -31,8 +30,7 @@ public class ResetPasswordServlet extends HttpServlet {
         } else {
             getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
         }
-        
-        
+
     }
 
     /**
@@ -46,15 +44,33 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String email = request.getParameter("email");
-        String url = request.getRequestURL().toString();
-        
+        String uuid = request.getParameter("uuid");
+        String message = "";
         AccountService as = new AccountService();
-        String path = getServletContext().getRealPath("/WEB-INF");
-        as.resetPassword(email, path, url);
-        String message = "Your request has been processed. Please check your email for the next steps.";
-        request.setAttribute("message", message);
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
+        // If there is a uuid parameter, we need to update the user password
+        if (uuid != null) {
+            String password = request.getParameter("password");
+            // Check if the user input an email and password and if the password could be changed
+            if (email != null && password != null && as.changePassword(email, password, uuid)) {
+                message = "Your password was changed successfully";
+            } else {
+                message = "Your password could not be changed. Please try again";
+                request.setAttribute("uuid", uuid);
+            }
+            request.setAttribute("message", message);
+            getServletContext().getRequestDispatcher("/WEB-INF/resetNewPassword.jsp").forward(request, response);
+        } else {
+            String url = request.getRequestURL().toString();
+            String path = getServletContext().getRealPath("/WEB-INF");
+            // For security, the user does not need to know if the reset request was successful
+            as.resetPassword(email, path, url);
+            message = "Your request has been processed. Please check your email for the next steps.";
+            request.setAttribute("message", message);
+
+            getServletContext().getRequestDispatcher("/WEB-INF/reset.jsp").forward(request, response);
+        }
+
     }
 }
